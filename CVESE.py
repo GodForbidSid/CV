@@ -11,7 +11,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
 from tensorflow.keras.utils import to_categorical
 
-# ================= Feature Extraction =================
+# Feature Extraction
 def extract_features(image_path):
     img = cv2.imread(image_path)
     img = cv2.resize(img, (128, 128))
@@ -32,8 +32,8 @@ def extract_features(image_path):
     
     return np.hstack([mean_color, hist, orb_feat])
 
-# ================= Load Dataset =================
-data_dir = r"C:\Users\Gunn Kataria\Downloads\feature extraction and classification\feature extraction and classification\data\rose"
+# Load Dataset
+data_dir = r""
 classes = os.listdir(data_dir)
 
 X_feat, y_labels, X_img = [], [], []
@@ -56,13 +56,13 @@ X_feat = np.array(X_feat)
 X_img = np.array(X_img)
 y_labels = np.array(y_labels)
 
-# ================= Save Features to Excel =================
+# Save Features to Excel
 df = pd.DataFrame(X_feat)
 df['label'] = y_labels
 df.to_excel("rose_features.xlsx", index=False)
 print("✅ Features saved to rose_features.xlsx")
 
-# ================= Train/Test Split =================
+# Train Test Split
 num_classes = len(classes)
 test_size = max(int(0.2 * len(X_feat)), num_classes)
 
@@ -73,7 +73,7 @@ Xi_train, Xi_test, yi_train, yi_test = train_test_split(
     X_img, y_labels, test_size=test_size, random_state=42, stratify=y_labels
 )
 
-# ================= Train k-NN =================
+# Train KNN
 knn = KNeighborsClassifier(n_neighbors=3)
 knn.fit(Xf_train, yf_train)
 joblib.dump(knn, "rose_knn.pkl")
@@ -83,7 +83,7 @@ print("\n📊 k-NN Accuracy:", accuracy_score(yf_test, y_pred_knn))
 print(classification_report(yf_test, y_pred_knn, target_names=classes))
 print("Confusion Matrix:\n", confusion_matrix(yf_test, y_pred_knn))
 
-# ================= Train CNN =================
+# Train CNN
 Xi_train = Xi_train / 255.0
 Xi_test = Xi_test / 255.0
 yi_train_oh = to_categorical(yi_train, len(classes))
@@ -106,8 +106,8 @@ loss, acc = cnn.evaluate(Xi_test, yi_test_oh, verbose=0)
 cnn.save("rose_cnn.keras")
 print("\n🧠 CNN Accuracy:", acc)
 
-# ================= Predict Single Validation Image =================
-image_path = r"C:\Users\Gunn Kataria\Downloads\feature extraction and classification\feature extraction and classification\data\validation\anthracnose.jpg"  # Change path
+# Predict Single Validation Image
+image_path = r""
 
 if not os.path.exists(image_path):
     print("⚠️ Image not found! Check the path.")
@@ -152,3 +152,4 @@ else:
     
     plt.tight_layout()
     plt.show()
+
